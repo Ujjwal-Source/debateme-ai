@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DebateMe AI — Setup Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07070e;--sur:#13131f;--sur2:#1a1a2a;--bdr:#2a2a42;--bdr2:#3a3a58;
+  --gold:#f0c840;--gold2:#ffd84d;--gdim:rgba(240,200,64,.1);
+  --blue:#4d9ef5;--bdim:rgba(77,158,245,.1);
+  --grn:#3de89a;--grdim:rgba(61,232,154,.1);
+  --red:#f0485a;--rdim:rgba(240,72,90,.1);
+  --pur:#b06af7;--pdim:rgba(176,106,247,.1);
+  --cyn:#26d9f0;--cdim:rgba(38,217,240,.1);
+  --mut:#6060a0;--txt:#f0f0fa;--txt2:#c0c0e0;--txt3:#8888b8;
+  --fh:'Bebas Neue',sans-serif;--fb:'IBM Plex Mono',monospace;--fi:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--fi);min-height:100vh;line-height:1.6;}
+.container{max-width:900px;margin:0 auto;padding:40px 20px 80px;}
+
+/* HEADER */
+.hero{text-align:center;padding:48px 0 40px;border-bottom:1px solid var(--bdr);position:relative;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,var(--gdim),transparent 70%);}
+.hero::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+  width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.hero-eye{font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;font-family:var(--fb);}
+.hero-title{font-family:var(--fh);font-size:clamp(52px,10vw,88px);line-height:.85;letter-spacing:4px;}
+.hero-title em{color:var(--gold);font-style:normal;}
+.hero-sub{font-size:13px;color:var(--txt3);margin-top:12px;letter-spacing:1px;font-family:var(--fb);}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+.badge{padding:4px 12px;border:1px solid var(--bdr2);border-radius:20px;font-size:11px;color:var(--txt3);font-family:var(--fb);}
+.badge.gold{border-color:var(--gold);color:var(--gold);background:var(--gdim);}
+
+/* PROGRESS NAV */
+.progress-nav{display:flex;gap:0;margin:32px 0 0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.progress-nav::-webkit-scrollbar{display:none;}
+.pstep{flex:1;min-width:100px;text-align:center;padding:12px 8px;border-bottom:2px solid var(--bdr);
+  font-size:11px;color:var(--mut);letter-spacing:1px;font-family:var(--fb);cursor:pointer;
+  transition:all .2s;text-transform:uppercase;}
+.pstep.active{color:var(--gold);border-bottom-color:var(--gold);}
+.pstep:hover{color:var(--txt2);}
+
+/* SECTIONS */
+.section{margin-top:40px;}
+.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.sec-num{font-family:var(--fh);font-size:48px;color:var(--gold);line-height:1;min-width:52px;}
+.sec-info{}
+.sec-title{font-family:var(--fh);font-size:28px;letter-spacing:2px;}
+.sec-sub{font-size:12px;color:var(--txt3);margin-top:2px;font-family:var(--fb);}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:16px 0;}
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;padding:18px 20px;transition:all .2s;}
+.card:hover{border-color:var(--bdr2);transform:translateY(-1px);}
+.card-icon{font-size:24px;margin-bottom:8px;}
+.card-title{font-family:var(--fh);font-size:17px;margin-bottom:4px;color:var(--txt);}
+.card-desc{font-size:11px;color:var(--txt3);line-height:1.65;font-family:var(--fb);}
+.card-link{display:inline-block;margin-top:8px;font-size:11px;color:var(--blue);text-decoration:none;font-family:var(--fb);}
+.card-link:hover{color:var(--gold);}
+.card.req{border-left:3px solid var(--gold);}
+
+/* CODE BLOCKS */
+.code-wrap{margin:12px 0;}
+.code-label{font-size:9px;letter-spacing:3px;color:var(--mut);text-transform:uppercase;
+  margin-bottom:6px;font-family:var(--fb);display:flex;justify-content:space-between;align-items:center;}
+.copy-btn{padding:3px 10px;background:none;border:1px solid var(--bdr);color:var(--mut);
+  font-size:9px;cursor:pointer;border-radius:4px;font-family:var(--fb);letter-spacing:1px;transition:all .15s;}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold);}
+.copy-btn.copied{border-color:var(--grn);color:var(--grn);}
+pre{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;
+  padding:16px 18px;overflow-x:auto;font-family:var(--fb);font-size:13px;
+  line-height:1.75;color:var(--txt2);}
+pre .c{color:var(--mut);}        /* comment */
+pre .k{color:var(--pur);}        /* keyword */
+pre .s{color:var(--grn);}        /* string */
+pre .n{color:var(--gold);}       /* number/name */
+pre .cmd{color:var(--cyn);}      /* command */
+pre .p{color:var(--blue);}       /* path */
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:0;margin:16px 0;}
+.step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--bdr);}
+.step:last-child{border-bottom:none;}
+.step-num{font-family:var(--fh);font-size:28px;color:var(--gold);min-width:36px;line-height:1.1;}
+.step-content{flex:1;}
+.step-title{font-family:var(--fh);font-size:18px;letter-spacing:1px;margin-bottom:6px;}
+.step-desc{font-size:13px;color:var(--txt2);line-height:1.75;}
+.step-desc a{color:var(--blue);text-decoration:none;}
+.step-desc a:hover{color:var(--gold);}
+
+/* PLATFORM COMPARISON */
+.platform-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0;}
+.platform{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;padding:20px;text-align:center;transition:all .2s;}
+.platform:hover{border-color:var(--bdr2);}
+.platform.best{border-color:var(--gold);}
+.platform-icon{font-size:32px;margin-bottom:8px;}
+.platform-name{font-family:var(--fh);font-size:20px;margin-bottom:4px;}
+.platform-free{font-size:10px;color:var(--grn);letter-spacing:1px;margin-bottom:10px;font-family:var(--fb);}
+.platform-best{font-size:9px;color:var(--gold);letter-spacing:2px;font-family:var(--fb);margin-bottom:10px;text-transform:uppercase;}
+.platform-pros{text-align:left;list-style:none;}
+.platform-pros li{font-size:11px;color:var(--txt2);padding:3px 0;font-family:var(--fb);}
+.platform-pros li::before{content:"✓ ";color:var(--grn);}
+
+/* ALERT BOXES */
+.alert{border-radius:8px;padding:14px 18px;margin:12px 0;font-size:13px;line-height:1.7;}
+.alert-tip{background:var(--gdim);border:1px solid rgba(240,200,64,.3);border-left:3px solid var(--gold);}
+.alert-warn{background:var(--rdim);border:1px solid rgba(240,72,90,.3);border-left:3px solid var(--red);}
+.alert-info{background:var(--bdim);border:1px solid rgba(77,158,245,.3);border-left:3px solid var(--blue);}
+.alert-title{font-family:var(--fh);font-size:14px;letter-spacing:1px;margin-bottom:4px;}
+
+/* FILE TREE */
+.tree{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:16px 20px;
+  font-family:var(--fb);font-size:13px;line-height:2;color:var(--txt2);margin:12px 0;}
+.tree-dir{color:var(--blue);}
+.tree-file{color:var(--txt3);}
+.tree-new{color:var(--grn);}
+.tree-imp{color:var(--gold);}
+.tree-com{color:var(--mut);}
+
+/* UPDATE WORKFLOW */
+.workflow{display:flex;align-items:center;gap:0;margin:16px 0;flex-wrap:wrap;}
+.wf-step{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:12px 16px;
+  font-size:11px;text-align:center;flex:1;min-width:120px;}
+.wf-step-icon{font-size:20px;margin-bottom:4px;}
+.wf-step-label{color:var(--txt2);font-family:var(--fb);}
+.wf-arrow{font-size:18px;color:var(--gold);padding:0 8px;flex-shrink:0;}
+
+/* EXTENSIONS */
+.ext-list{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.ext{display:flex;align-items:center;gap:12px;background:var(--sur);border:1px solid var(--bdr);
+  border-radius:8px;padding:12px 16px;}
+.ext-icon{font-size:20px;min-width:28px;}
+.ext-info{flex:1;}
+.ext-name{font-size:13px;font-weight:500;color:var(--txt);}
+.ext-id{font-size:10px;color:var(--mut);font-family:var(--fb);margin-top:2px;}
+.ext-why{font-size:11px;color:var(--txt3);margin-top:2px;}
+.ext-badge{font-size:9px;padding:2px 8px;border-radius:20px;letter-spacing:1px;font-family:var(--fb);border:1px solid;}
+.must{border-color:var(--gold);color:var(--gold);background:var(--gdim);}
+.nice{border-color:var(--blue);color:var(--blue);background:var(--bdim);}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--bdr),transparent);margin:40px 0;}
+
+/* FOOTER */
+.footer{text-align:center;padding:32px 0;border-top:1px solid var(--bdr);margin-top:48px;}
+.footer-title{font-family:var(--fh);font-size:24px;color:var(--gold);margin-bottom:8px;}
+.footer-sub{font-size:12px;color:var(--txt3);font-family:var(--fb);}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .cards,.platform-grid{grid-template-columns:1fr;}
+  .workflow{flex-direction:column;}
+  .wf-arrow{transform:rotate(90deg);}
+  .container{padding:24px 14px 60px;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eye">⚔ Complete Project Guide</div>
+    <div class="hero-title">DEBATE<em>ME</em> AI</div>
+    <div class="hero-sub">VS Code Setup · GitHub Upload · Deployment · Update Workflow</div>
+    <div class="badges">
+      <span class="badge gold">React 18 + Vite</span>
+      <span class="badge">Free Deployment</span>
+      <span class="badge">Auto-Deploy on Push</span>
+      <span class="badge">Mobile Ready</span>
+    </div>
+  </div>
+
+  <!-- PROGRESS NAV -->
+  <div class="progress-nav">
+    <div class="pstep active">1. Prerequisites</div>
+    <div class="pstep">2. VS Code Setup</div>
+    <div class="pstep">3. Run Locally</div>
+    <div class="pstep">4. GitHub</div>
+    <div class="pstep">5. Deploy</div>
+    <div class="pstep">6. Updates</div>
+  </div>
+
+  <!-- ═══ SECTION 1: PREREQUISITES ═══ -->
+  <div class="section" id="s1">
+    <div class="sec-header">
+      <div class="sec-num">01</div>
+      <div class="sec-info">
+        <div class="sec-title">Install Prerequisites</div>
+        <div class="sec-sub">Ek baar install karo — phir kabhi nahi karna</div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card req">
+        <div class="card-icon">🟢</div>
+        <div class="card-title">Node.js (v18+)</div>
+        <div class="card-desc">JavaScript runtime — React apps ke liye zaroori hai. LTS version download karo.</div>
+        <a href="https://nodejs.org" class="card-link" target="_blank">→ nodejs.org (download LTS)</a>
+      </div>
+      <div class="card req">
+        <div class="card-icon">🐙</div>
+        <div class="card-title">Git</div>
+        <div class="card-desc">Version control — GitHub pe code upload karne ke liye. Git Bash bhi install hoga Windows pe.</div>
+        <a href="https://git-scm.com" class="card-link" target="_blank">→ git-scm.com</a>
+      </div>
+      <div class="card req">
+        <div class="card-icon">💙</div>
+        <div class="card-title">VS Code</div>
+        <div class="card-desc">Best free code editor. Pehle se installed ho to skip karo.</div>
+        <a href="https://code.visualstudio.com" class="card-link" target="_blank">→ code.visualstudio.com</a>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐙</div>
+        <div class="card-title">GitHub Account</div>
+        <div class="card-desc">Free account banana hai. Email se sign up karo. Deployment ke liye bhi use hoga.</div>
+        <a href="https://github.com" class="card-link" target="_blank">→ github.com (sign up free)</a>
+      </div>
+    </div>
+
+    <div class="alert alert-tip">
+      <div class="alert-title">✅ Check karo sab install hua ya nahi</div>
+      VS Code terminal kholo (<strong>Ctrl + `</strong>) aur yeh commands run karo:<br><br>
+      <code style="color:var(--cyn)">node --version</code> → should show v18.x.x or higher<br>
+      <code style="color:var(--cyn)">npm --version</code> → should show 9.x.x or higher<br>
+      <code style="color:var(--cyn)">git --version</code> → should show git version 2.x.x
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ SECTION 2: VS CODE SETUP ═══ -->
+  <div class="section" id="s2">
+    <div class="sec-header">
+      <div class="sec-num">02</div>
+      <div class="sec-info">
+        <div class="sec-title">VS Code Setup</div>
+        <div class="sec-sub">Project open karo aur extensions install karo</div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Project Download Karo</div>
+          <div class="step-desc">
+            Is guide ke saath milne wali ZIP file download karo.<br>
+            Kisi folder mein extract karo jaise: <code style="color:var(--grn)">C:\Projects\debateme-ai</code> (Windows) ya <code style="color:var(--grn)">~/Projects/debateme-ai</code> (Mac/Linux)
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">VS Code Mein Open Karo</div>
+          <div class="step-desc">
+            VS Code open karo → <strong>File → Open Folder</strong> → extracted folder select karo<br>
+            Ya terminal mein: <code style="color:var(--cyn)">code debateme-ai</code>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Project Structure Verify Karo</div>
+          <div class="step-desc">
+            Left sidebar mein yeh files dikhni chahiye:
+          </div>
+          <div class="tree">
+            <span class="tree-dir">📁 debateme-ai/</span><br>
+            &nbsp;&nbsp;<span class="tree-dir">📁 public/</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-file">sword.svg</span><br>
+            &nbsp;&nbsp;<span class="tree-dir">📁 src/</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-imp">⭐ App.jsx</span> <span class="tree-com">← main app, yahan sab kuch hai</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-file">main.jsx</span> <span class="tree-com">← entry point</span><br>
+            &nbsp;&nbsp;<span class="tree-imp">⭐ index.html</span><br>
+            &nbsp;&nbsp;<span class="tree-imp">⭐ package.json</span><br>
+            &nbsp;&nbsp;<span class="tree-file">vite.config.js</span><br>
+            &nbsp;&nbsp;<span class="tree-file">netlify.toml</span><br>
+            &nbsp;&nbsp;<span class="tree-file">vercel.json</span><br>
+            &nbsp;&nbsp;<span class="tree-file">.gitignore</span><br>
+            &nbsp;&nbsp;<span class="tree-file">README.md</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px"><strong style="font-size:14px;color:var(--gold);">Recommended VS Code Extensions</strong></div>
+    <div class="ext-list" style="margin-top:12px">
+      <div class="ext">
+        <div class="ext-icon">⚛️</div>
+        <div class="ext-info">
+          <div class="ext-name">ES7+ React/Redux/React-Native Snippets</div>
+          <div class="ext-id">dsznajder.es7-react-js-snippets</div>
+          <div class="ext-why">React code shortcuts — rfc type karo, complete component ban jaata hai</div>
+        </div>
+        <span class="ext-badge must">MUST</span>
+      </div>
+      <div class="ext">
+        <div class="ext-icon">🔍</div>
+        <div class="ext-info">
+          <div class="ext-name">ESLint</div>
+          <div class="ext-id">dbaeumer.vscode-eslint</div>
+          <div class="ext-why">Code errors real-time dikhata hai — bugs pehle pakadta hai</div>
+        </div>
+        <span class="ext-badge must">MUST</span>
+      </div>
+      <div class="ext">
+        <div class="ext-icon">✨</div>
+        <div class="ext-info">
+          <div class="ext-name">Prettier - Code Formatter</div>
+          <div class="ext-id">esbenp.prettier-vscode</div>
+          <div class="ext-why">Auto-formats code on save — hamesha clean code</div>
+        </div>
+        <span class="ext-badge must">MUST</span>
+      </div>
+      <div class="ext">
+        <div class="ext-icon">🏷️</div>
+        <div class="ext-info">
+          <div class="ext-name">Auto Rename Tag</div>
+          <div class="ext-id">formulahendry.auto-rename-tag</div>
+          <div class="ext-why">Opening tag rename karo, closing tag automatically update ho jaata hai</div>
+        </div>
+        <span class="ext-badge nice">NICE</span>
+      </div>
+      <div class="ext">
+        <div class="ext-icon">🦊</div>
+        <div class="ext-info">
+          <div class="ext-name">GitLens</div>
+          <div class="ext-id">eamodio.gitlens</div>
+          <div class="ext-why">Git history VS Code mein hi dekho — kaun kya change kiya</div>
+        </div>
+        <span class="ext-badge nice">NICE</span>
+      </div>
+    </div>
+
+    <div class="alert alert-info" style="margin-top:16px">
+      <div class="alert-title">💡 Extension Install Karna Easy Hai</div>
+      VS Code mein <strong>Ctrl+Shift+X</strong> dabaao → search box mein extension name type karo → Install button click karo. Done!
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ SECTION 3: RUN LOCALLY ═══ -->
+  <div class="section" id="s3">
+    <div class="sec-header">
+      <div class="sec-num">03</div>
+      <div class="sec-info">
+        <div class="sec-title">Local Mein Run Karo</div>
+        <div class="sec-sub">2 commands — app chal jayegi</div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Terminal Kholo</div>
+          <div class="step-desc">VS Code mein: <strong>Ctrl + `</strong> (backtick — keyboard pe ~ waali key)<br>Ya menu se: Terminal → New Terminal</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Dependencies Install Karo</div>
+          <div class="step-desc">Sirf pehli baar karna hai — React, Vite sab download hoga (~30 seconds)</div>
+          <div class="code-wrap">
+            <div class="code-label">TERMINAL <button class="copy-btn" onclick="copyCode(this,'npm install')">Copy</button></div>
+            <pre><span class="cmd">npm install</span></pre>
+          </div>
+          <div class="step-desc">Terminal mein <code style="color:var(--grn)">added 250 packages</code> jaisi line aayegi — success!</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Development Server Start Karo</div>
+          <div class="code-wrap">
+            <div class="code-label">TERMINAL <button class="copy-btn" onclick="copyCode(this,'npm run dev')">Copy</button></div>
+            <pre><span class="cmd">npm run dev</span></pre>
+          </div>
+          <div class="step-desc">
+            Terminal mein yeh dikhega:<br>
+            <code style="color:var(--grn)">VITE v5.x.x  ready in 500ms</code><br>
+            <code style="color:var(--cyn)">➜  Local:   http://localhost:3000/</code><br><br>
+            Browser automatically open ho jaayega ya khud jaao: <strong style="color:var(--gold)">http://localhost:3000</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-tip">
+      <div class="alert-title">🔥 Hot Reload — Magic Feature</div>
+      Jab bhi tum <code>App.jsx</code> mein koi change save karo (<strong>Ctrl+S</strong>), browser automatically refresh ho jaata hai bina page reload ke. Live editing ka maza!
+    </div>
+
+    <div style="margin-top:20px"><strong style="color:var(--gold);font-size:14px;">Other Useful Commands</strong></div>
+    <div class="code-wrap" style="margin-top:12px">
+      <div class="code-label">USEFUL COMMANDS</div>
+      <pre><span class="c"># Development server start karo</span>
+<span class="cmd">npm run dev</span>
+
+<span class="c"># Production build banao (deploy se pehle)</span>
+<span class="cmd">npm run build</span>
+
+<span class="c"># Build preview karo locally</span>
+<span class="cmd">npm run preview</span>
+
+<span class="c"># Server band karo</span>
+<span class="k">Ctrl + C</span></pre>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ SECTION 4: GITHUB ═══ -->
+  <div class="section" id="s4">
+    <div class="sec-header">
+      <div class="sec-num">04</div>
+      <div class="sec-info">
+        <div class="sec-title">GitHub Pe Upload Karo</div>
+        <div class="sec-sub">Code safe rakho + deployment ke liye zaroori</div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      <div class="alert-title">⚠️ Pehle Ek Baar Setup — Phir Automatic</div>
+      Yeh steps sirf pehli baar karne hain. Uske baad <code>git add . → git commit → git push</code> — 3 commands, aur code GitHub pe chala jaayega.
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">GitHub Pe Naya Repository Banao</div>
+          <div class="step-desc">
+            1. <a href="https://github.com/new" target="_blank">github.com/new</a> pe jaao<br>
+            2. <strong>Repository name:</strong> <code style="color:var(--grn)">debateme-ai</code><br>
+            3. <strong>Description:</strong> AI-Powered Debate Arena<br>
+            4. <strong>Public</strong> select karo (free deployment ke liye)<br>
+            5. <strong>⚠️ "Add a README file" mat check karo</strong> (humara apna hai)<br>
+            6. <strong>"Create repository"</strong> click karo
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Git Configure Karo (First Time Only)</div>
+          <div class="code-wrap">
+            <div class="code-label">TERMINAL — APNA NAAM AUR EMAIL DAALO <button class="copy-btn" onclick="copyCode(this, 'git config --global user.name \"Apna Naam\"\ngit config --global user.email \"apnaemail@gmail.com\"')">Copy</button></div>
+            <pre><span class="cmd">git config</span> <span class="k">--global</span> user.name <span class="s">"Apna Naam"</span>
+<span class="cmd">git config</span> <span class="k">--global</span> user.email <span class="s">"apnaemail@gmail.com"</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Project Initialize Karo aur Push Karo</div>
+          <div class="alert alert-info" style="margin-bottom:12px">
+            <strong>YOUR_USERNAME</strong> ki jagah apna GitHub username daalo!
+          </div>
+          <div class="code-wrap">
+            <div class="code-label">TERMINAL — EK EK COMMAND RUN KARO <button class="copy-btn" onclick="copyCode(this, 'git init\ngit add .\ngit commit -m \"🚀 Initial commit - DebateMe AI v4\"\ngit remote add origin https://github.com/YOUR_USERNAME/debateme-ai.git\ngit branch -M main\ngit push -u origin main')">Copy All</button></div>
+            <pre><span class="c"># Step 1: Git initialize karo</span>
+<span class="cmd">git init</span>
+
+<span class="c"># Step 2: Sab files add karo</span>
+<span class="cmd">git add .</span>
+
+<span class="c"># Step 3: First commit karo</span>
+<span class="cmd">git commit</span> -m <span class="s">"🚀 Initial commit - DebateMe AI v4"</span>
+
+<span class="c"># Step 4: GitHub se connect karo (YOUR_USERNAME replace karo!)</span>
+<span class="cmd">git remote add origin</span> <span class="p">https://github.com/YOUR_USERNAME/debateme-ai.git</span>
+
+<span class="c"># Step 5: Main branch set karo</span>
+<span class="cmd">git branch</span> -M main
+
+<span class="c"># Step 6: GitHub pe push karo</span>
+<span class="cmd">git push</span> -u origin main</pre>
+          </div>
+          <div class="step-desc" style="margin-top:8px">
+            Pehli baar push karne pe GitHub login maangega — apna username aur password (ya Personal Access Token) daalo.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Verify Karo</div>
+          <div class="step-desc">
+            <code style="color:var(--blue)">https://github.com/YOUR_USERNAME/debateme-ai</code> pe jaao.<br>
+            Saari files dikhni chahiye — README, src, package.json sab. ✅
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ SECTION 5: DEPLOY ═══ -->
+  <div class="section" id="s5">
+    <div class="sec-header">
+      <div class="sec-num">05</div>
+      <div class="sec-info">
+        <div class="sec-title">Deploy — Live Karo</div>
+        <div class="sec-sub">Free mein internet pe — koi bhi access kar sake</div>
+      </div>
+    </div>
+
+    <div class="platform-grid">
+      <div class="platform best">
+        <div class="platform-icon">▲</div>
+        <div class="platform-name">Vercel</div>
+        <div class="platform-free">100% FREE</div>
+        <div class="platform-best">⭐ RECOMMENDED</div>
+        <ul class="platform-pros">
+          <li>Fastest deployment (2 min)</li>
+          <li>Auto-deploy on git push</li>
+          <li>Free custom domain</li>
+          <li>Global CDN</li>
+          <li>Best for React/Vite</li>
+        </ul>
+      </div>
+      <div class="platform">
+        <div class="platform-icon">🌐</div>
+        <div class="platform-name">Netlify</div>
+        <div class="platform-free">100% FREE</div>
+        <ul class="platform-pros">
+          <li>Also very easy</li>
+          <li>Auto-deploy on git push</li>
+          <li>Free custom domain</li>
+          <li>Form handling built-in</li>
+          <li>Great alternative</li>
+        </ul>
+      </div>
+      <div class="platform">
+        <div class="platform-icon">🐙</div>
+        <div class="platform-name">GitHub Pages</div>
+        <div class="platform-free">100% FREE</div>
+        <ul class="platform-pros">
+          <li>Directly from GitHub</li>
+          <li>No separate account</li>
+          <li>Slightly more setup</li>
+          <li>username.github.io URL</li>
+          <li>Good for static sites</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:28px">
+      <strong style="font-family:var(--fh);font-size:20px;color:var(--gold);letter-spacing:2px;">VERCEL — Recommended Steps</strong>
+    </div>
+
+    <div class="steps" style="margin-top:16px">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Vercel Account Banao</div>
+          <div class="step-desc">
+            <a href="https://vercel.com" target="_blank">vercel.com</a> pe jaao → <strong>"Sign Up"</strong> → <strong>"Continue with GitHub"</strong> click karo.<br>
+            GitHub se login hoga — easy hai.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Project Import Karo</div>
+          <div class="step-desc">
+            1. Vercel dashboard mein <strong>"New Project"</strong> click karo<br>
+            2. <strong>"Import Git Repository"</strong> — <code>debateme-ai</code> dikhega<br>
+            3. <strong>"Import"</strong> click karo
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Deploy Karo (1 Click!)</div>
+          <div class="step-desc">
+            Vercel automatically detect karta hai yeh Vite project hai.<br>
+            Settings change mat karo — <strong>"Deploy"</strong> click karo.<br><br>
+            <strong style="color:var(--grn)">~2 minutes mein:</strong> 🎉 <code style="color:var(--gold)">https://debateme-ai.vercel.app</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-tip" style="margin-top:20px">
+      <div class="alert-title">🔄 Auto-Deploy Magic</div>
+      Ab har baar jab tum <code>git push</code> karoge, Vercel automatically naya version deploy kar dega. Koi manual step nahi! Push karo aur 2 min mein live. 🚀
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ SECTION 6: UPDATES ═══ -->
+  <div class="section" id="s6">
+    <div class="sec-header">
+      <div class="sec-num">06</div>
+      <div class="sec-info">
+        <div class="sec-title">Update Karna — Workflow</div>
+        <div class="sec-sub">Naye features add karte raho — yeh hai daily workflow</div>
+      </div>
+    </div>
+
+    <div class="workflow">
+      <div class="wf-step">
+        <div class="wf-step-icon">💻</div>
+        <div class="wf-step-label">VS Code mein code edit karo</div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-step-icon">🔍</div>
+        <div class="wf-step-label">localhost:3000 pe test karo</div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-step-icon">📦</div>
+        <div class="wf-step-label">git add . && git commit</div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-step-icon">⬆️</div>
+        <div class="wf-step-label">git push</div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step" style="border-color:var(--grn)">
+        <div class="wf-step-icon">🚀</div>
+        <div class="wf-step-label" style="color:var(--grn)">Auto-deploy ho gaya!</div>
+      </div>
+    </div>
+
+    <div class="code-wrap" style="margin-top:20px">
+      <div class="code-label">DAILY UPDATE COMMANDS (sirf yeh 3) <button class="copy-btn" onclick="copyCode(this, 'git add .\ngit commit -m \"✨ Feature: description here\"\ngit push')">Copy</button></div>
+      <pre><span class="c"># 1. Sab changes stage karo</span>
+<span class="cmd">git add .</span>
+
+<span class="c"># 2. Commit karo — achha message likho!</span>
+<span class="cmd">git commit</span> -m <span class="s">"✨ Feature: add Hindi mode toggle"</span>
+
+<span class="c"># 3. GitHub pe push karo (Vercel auto-deploy karega)</span>
+<span class="cmd">git push</span></pre>
+    </div>
+
+    <div style="margin-top:20px">
+      <strong style="color:var(--gold)">Good Commit Messages Examples:</strong>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">COMMIT MESSAGE FORMAT</div>
+      <pre><span class="s">"🚀 Initial commit"</span>          <span class="c">← pehla commit</span>
+<span class="s">"✨ Feature: add voice debate mode"</span>  <span class="c">← naya feature</span>
+<span class="s">"🐛 Fix: timer not resetting"</span>    <span class="c">← bug fix</span>
+<span class="s">"🎨 Style: improve light mode UI"</span>  <span class="c">← design change</span>
+<span class="s">"📝 Docs: update README"</span>         <span class="c">← documentation</span>
+<span class="s">"⚡ Perf: reduce API calls"</span>       <span class="c">← performance</span>
+<span class="s">"🔧 Config: update vite settings"</span>  <span class="c">← config change</span></pre>
+    </div>
+
+    <div class="alert alert-tip" style="margin-top:20px">
+      <div class="alert-title">💡 VS Code Git GUI — Command Line Nahi Pasand?</div>
+      VS Code mein left sidebar pe <strong>Source Control icon</strong> (Ctrl+Shift+G) click karo. Yahan se visually files stage karo, commit message likho, push karo — sab bina terminal ke!
+    </div>
+
+    <div style="margin-top:24px">
+      <strong style="font-family:var(--fh);font-size:18px;color:var(--gold);letter-spacing:2px;">App.jsx Mein Changes Kaise Karein</strong>
+    </div>
+    <div class="steps" style="margin-top:12px">
+      <div class="step">
+        <div class="step-num">→</div>
+        <div class="step-content">
+          <div class="step-title">New Feature Add Karna</div>
+          <div class="step-desc">
+            <code>src/App.jsx</code> open karo → feature dhundo with <strong>Ctrl+F</strong> → changes karo → save (<strong>Ctrl+S</strong>) → browser auto-refresh hoga
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">→</div>
+        <div class="step-content">
+          <div class="step-title">Style Change Karna</div>
+          <div class="step-desc">
+            <code>App.jsx</code> ke top mein <code>const CSS = `...`</code> section hai — yahan sab CSS hai. Edit karo, turant browser pe change dikhega.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">→</div>
+        <div class="step-content">
+          <div class="step-title">New Tab Add Karna</div>
+          <div class="step-desc">
+            <code>nav</code> section mein tab add karo + niche corresponding JSX section likho.<br>
+            Pattern follow karo jo already hai (school, dashboard, etc.)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="section">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-family:var(--fh);font-size:28px;color:var(--gold);letter-spacing:3px">⚡ QUICK REFERENCE CARD</div>
+      <div style="font-size:12px;color:var(--txt3);margin-top:4px;font-family:var(--fb)">Print kar lo ya screenshot le lo</div>
+    </div>
+    <div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:12px;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div style="font-family:var(--fh);font-size:16px;color:var(--gold);margin-bottom:10px;letter-spacing:1px">LOCAL DEVELOPMENT</div>
+        <pre style="font-size:12px;background:var(--sur);border-radius:6px;padding:12px"><span class="cmd">npm install</span>       <span class="c">← pehli baar</span>
+<span class="cmd">npm run dev</span>        <span class="c">← start karo</span>
+<span class="k">localhost:3000</span>     <span class="c">← browser mein</span>
+<span class="k">Ctrl+S</span>            <span class="c">← save = refresh</span>
+<span class="k">Ctrl+C</span>            <span class="c">← server band</span></pre>
+      </div>
+      <div>
+        <div style="font-family:var(--fh);font-size:16px;color:var(--gold);margin-bottom:10px;letter-spacing:1px">GIT COMMANDS</div>
+        <pre style="font-size:12px;background:var(--sur);border-radius:6px;padding:12px"><span class="cmd">git add .</span>          <span class="c">← stage all</span>
+<span class="cmd">git commit</span> -m <span class="s">"msg"</span> <span class="c">← save</span>
+<span class="cmd">git push</span>           <span class="c">← upload</span>
+<span class="cmd">git status</span>         <span class="c">← kya changed</span>
+<span class="cmd">git log</span>            <span class="c">← history</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-title">⚔ DebateMe AI</div>
+    <div class="footer-sub">Challenge your ideas · Destroy fallacies · Think better</div>
+    <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <span class="badge">React 18</span>
+      <span class="badge">Vite 5</span>
+      <span class="badge">Claude Sonnet API</span>
+      <span class="badge">Web Speech API</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function copyCode(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.className = 'copy-btn copied';
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.className = 'copy-btn';
+    }, 2000);
+  });
+}
+// Highlight active nav step on scroll
+const sections = document.querySelectorAll('.section');
+const steps = document.querySelectorAll('.pstep');
+window.addEventListener('scroll', () => {
+  let current = 0;
+  sections.forEach((s, i) => {
+    if (window.scrollY >= s.offsetTop - 200) current = i;
+  });
+  steps.forEach((s, i) => {
+    s.className = 'pstep' + (i === current ? ' active' : '');
+  });
+});
+</script>
+</body>
+</html>
